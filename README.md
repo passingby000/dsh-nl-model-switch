@@ -1,53 +1,57 @@
-# dsh-nl-model-switch
+<p align="center">
+  <strong>dsh-nl-model-switch</strong>
+  <br/>
+  <sub>用自然语言切换 DSH 会话模型，不用离开对话界面，不用记命令。</sub>
+</p>
 
-用一句自然语言切换当前 DSH 会话的模型（独立于任何 IM 桥），例如：
+<p align="center">
+  <a href="https://www.npmjs.com/package/dsh-nl-model-switch"><img src="https://img.shields.io/npm/v/dsh-nl-model-switch?color=blue" alt="npm"></a>
+  <a href="https://github.com/passingby000/dsh-nl-model-switch/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
+</p>
 
-- `切换到 deepseek-v4-flash 模型`
-- `切到 deepseek-v4-pro`
-- `换到 glm-5.3 模型做 xxx 任务`
-- `switch to deepseek-v4-flash model`
+---
 
-## 原理
+## 这是什么？
 
-- 注册一个模型可调用的工具 `switch_model(provider, model)`。
-- 工具内部调用与原生 `/model` 相同的公开面
-  `ctx.apiProxy.sessions.selectModel({ sessionId, provider, model })`，
-  设置会话级模型选择，**在下次 prompt 组装边界生效，并保留同一会话/上下文**。
-- 系统提示词段指导模型：当用户用自然语言请求换模型时调用 `switch_model`，
-  切换后明确确认（如「已从 xxx 切换到 xxx」）并继续用户的请求。
-- `tools/result` 处理器在 `switch_model` 成功后结束旧模型当前回合，并为**新模型**
-  开启一个新回合，由其发送确认并接续处理原请求。外部看到仍是普通的一问一答。
+DSH 原生支持 `/model` 弹窗切换模型，但每次都要中断思路去点选。**dsh-nl-model-switch** 让你在对话中直接说一句「切到 xxx 模型」，模型自动切换，会话上下文完整保留，新模型无缝接续当前任务。
 
-## 依赖注入
+有问题或想开发的功能？[提个 Issue](https://github.com/passingby000/dsh-nl-model-switch/issues)。
 
-`inject: ['tools', 'systemPrompt', 'llm', 'apiProxy']`（`tools`、`systemPrompt`
-与 `apiProxy` 由 DSH 宿主提供；`llm` 保留以备未来校验调用）。
+## 特性
 
-## 安装位置（重要：必须放在 profile 内，不能用 link:）
+- **自然语言一句话切换** — 说「切到 deepseek-v4-flash」「换到 glm-5.3 做翻译」「switch to deepseek-v4-pro」即可
+- **上下文完整保留** — 切换在同一会话内完成，对话历史不丢失
+- **新模型无缝接续** — 切换后新模型会确认切换并继续处理你刚才的请求
+- **与原生 /model 互补** — 底层走同一个会话级模型选择接口，两者共存
+- **零 UI 依赖** — 纯宿主插件，不修改客户端界面
 
-- **运行副本（实目录）**：`C:\Users\PC\.dsh\profiles\web\node_modules\dsh-nl-model-switch\`
-  - 这是 DSH 实际加载的目录，必须是**真实目录**，不能是指向外部路径的
-    `link:` / junction。
-  - 原因：本插件 import `@deepseek-ai/dsh-tools` / `@deepseek-ai/dsh-llm`，
-    它们只能从 realpath 位于 `C:\Users\PC\.dsh\profiles\...` 之下的文件解析到
-    （向上可找到 `C:\Users\PC\.dsh\profiles\node_modules\@deepseek-ai`）。
-    若用 `link:` 指向 `D:\...`，realpath 在 D 盘，找不到 `@deepseek-ai` →
-    开机报 `ERR_MODULE_NOT_FOUND`。
-- **编辑用源码镜像**：`D:\DeepSeekTools\dsh-nl-model-switch\`
-  修改后请把 `lib\`、`package.json`、`cordis.patch.yml` 同步复制回上面的运行副本。
-- 注册方式：只加入 `dsh.profile.bundles` 列表，**不要**加入 `dependencies`
-  （`dsh plugin add <dir>` 会产生 `link:` 依赖，正是上面的坑）。
+## 安装
 
-## 使用前提 / 重启
+```bash
+dsh plugin add dsh-nl-model-switch
+```
 
-1. 重启 `dsh web` 使新 bundle 激活（本 Agent 不会杀掉运行中的 dsh web）。
-2. 确认目标模型已在 `settings.yaml` 的 `llm-pi-ai.providers.*.models` 里注册
-   （当前：`deepseek-v4-flash` / `deepseek-v4-pro` / `glm-5.3`）。
+安装后重启 `dsh web` 即可生效。
 
-## 已知限制
+## 使用
 
-- 切换指令先作为一次普通用户消息发给当前模型，由模型决定调用 `switch_model`；
-  依赖模型正确识别 `switch_model` 工具（系统提示词已引导）。
-- 若模型未调用工具，只用一句话描述「已切换」，切换不会真正发生。
-- 与原生 `/model` 共享同一会话级选择机制；两者互补。
-- 普通消息不受影响（只有模型决定调用 `switch_model` 时才走切换路径）。
+在对话中直接用自然语言说：
+
+```
+切换到 deepseek-v4-flash 模型
+切到 deepseek-v4-pro
+换到 glm-5.3，帮我翻译这段文字
+用 deepseek-v4-flash 模型重新回答
+switch to deepseek-v4-flash model
+```
+
+模型会调用 `switch_model` 工具完成切换，新模型确认后继续你的请求。
+
+## 前提
+
+- 目标模型已在 DSH 的 `settings.yaml` 中注册（`providers.*.models` 列表里）
+- 模型需要能识别并调用 `switch_model` 工具（主流模型均支持）
+
+## 许可
+
+MIT
