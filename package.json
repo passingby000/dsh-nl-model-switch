@@ -18,7 +18,10 @@
     "lib/index.js",
     "cordis.patch.yml"
   ],
-  "repository": "github:passingby000/dsh-nl-model-switch",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/passingby000/dsh-nl-model-switch.git"
+  },
   "keywords": ["dsh", "dsh-plugin", "model-switch", "deepseek-harness", "natural-language"],
   "author": "passingby000",
   "license": "MIT"
