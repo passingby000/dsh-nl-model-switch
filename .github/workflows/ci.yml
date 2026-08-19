@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Syntax check (node --check)
+        run: node --check lib/index.js
+      - name: Validate package.json
+        run: node -e "const p=require('./package.json'); if(!p.dsh||!p.dsh.bundle||!p.dsh.bundle.patch) process.exit(1); if(p.main!=='lib/index.js') process.exit(1); console.log('manifest OK')"
+      - name: Validate cordis patch exists
+        run: test -f cordis.patch.yml
