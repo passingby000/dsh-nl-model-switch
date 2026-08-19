@@ -1,13 +1,21 @@
 {
   "name": "dsh-nl-model-switch",
-  "version": "0.1.0",
-  "description": "Switch the current DSH session's model with a natural-language sentence (independent of any IM bridge).",
+  "version": "0.1.1",
+  "description": "Switch the current DSH session's model with a natural-language sentence, on web, TUI, or IM bridges (WeChat, Feishu, etc.).",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js",
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json"
+  },
+  "scripts": {
+    "check": "node --check lib/index.js",
+    "smoke": "node scripts/smoke.mjs",
+    "test": "node --check lib/index.js && node scripts/smoke.mjs"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dsh": {
     "bundle": {
@@ -16,13 +24,22 @@
   },
   "files": [
     "lib/index.js",
-    "cordis.patch.yml"
+    "cordis.patch.yml",
+    "scripts/smoke.mjs",
+    "README.md",
+    "LICENSE"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/passingby000/dsh-nl-model-switch.git"
   },
-  "keywords": ["dsh", "dsh-plugin", "model-switch", "deepseek-harness", "natural-language"],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "model-switch",
+    "deepseek-harness",
+    "natural-language"
+  ],
   "author": "passingby000",
   "license": "MIT"
 }
