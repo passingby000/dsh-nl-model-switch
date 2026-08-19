@@ -52,6 +52,13 @@ switch to deepseek-v4-flash model
 - 目标模型已在 DSH 的 `settings.yaml` 中注册（`providers.*.models` 列表里）
 - 模型需要能识别并调用 `switch_model` 工具（主流模型均支持）
 
+## 贡献者
+
+<p align="left">
+  <a href="https://github.com/passingby000"><img src="https://avatars.githubusercontent.com/passingby000" width="40" height="40" style="border-radius:50%" alt="passingby000"/></a>
+  <a href="https://github.com/deepseek-ai"><img src="https://avatars.githubusercontent.com/deepseek-ai" width="40" height="40" style="border-radius:50%" alt="DeepSeek"/></a>
+</p>
+
 ## 许可
 
 MIT
