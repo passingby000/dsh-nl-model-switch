@@ -1,0 +1,22 @@
+{
+  "name": "dsh-nl-model-switch",
+  "version": "0.1.0",
+  "description": "Switch the current DSH session's model with a natural-language sentence (independent of any IM bridge).",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "files": [
+    "lib/index.js",
+    "cordis.patch.yml"
+  ],
+  "license": "MIT"
+}

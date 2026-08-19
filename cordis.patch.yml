@@ -1,0 +1,4 @@
+# dsh-nl-model-switch bundle patch: mount the natural-language model-switch host plugin.
+- insert:
+    - id: dsh-nl-model-switch
+      name: dsh-nl-model-switch
